@@ -76,8 +76,7 @@ legend('1 rad/s', '10 rad/s', '25 rad/s')
 clear F v;
 k = 2.0;
 M = 1.0;
-tmax = 40;
-t = 0 : ts : tmax;
+t = 0 : ts : 60;
 F = zeros(1, length(t));
 v = zeros(1, length(t));
 x = zeros(1, length(t));
@@ -90,25 +89,18 @@ for j = 1 : length(t) - 1
     v(j + 1) = v(j) + v_dot * ts;
     x(j + 1) = x(j) + v(j + 1) * ts;
 end
-
+%%
 figure
 subplot(2, 1, 1)
 hold on
 plot(t, x)
 plot(t, y)
-legend('x', 'y', 'Location', 'northwest')
+legend('x', 'y')
 xlabel('Time (s)')
 ylabel('Position (m)')
-axis([0, tmax, 0, 4])
-grid
-
 subplot(2, 1, 2)
 hold on
 plot(t, F)
 plot(t, v)
-legend('F', 'dx/dt', 'Location', 'northwest')
-xlabel('Time (s)')
-ylabel({'Friction Force (N)', 'Velocity (m/s)'})
+legend('F', 'd
 sgtitle('Simulation of stick-slip motion')
-axis([0, tmax, 0, 2])
-grid
