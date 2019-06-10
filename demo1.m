@@ -76,17 +76,18 @@ legend('1 rad/s', '10 rad/s', '25 rad/s')
 clear F v;
 k = 2.0;
 M = 1.0;
-tmax = 40;
+tmax = 25;
 t = 0 : ts : tmax;
 F = zeros(1, length(t));
 v = zeros(1, length(t));
 x = zeros(1, length(t));
 y = 0.1 * t;
+z = 0;
 for j = 1 : length(t) - 1
     % compute friction force
     [F(j + 1), z] = lugref(z, v(j), Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
     % compute block motion
-    v_dot = (k*(y(j) - x(j) - F(j)))/M;
+    v_dot = (k*(y(j) - x(j)) - F(j))/M;
     v(j + 1) = v(j) + v_dot * ts;
     x(j + 1) = x(j) + v(j + 1) * ts;
 end
@@ -109,6 +110,6 @@ plot(t, v)
 legend('F', 'dx/dt', 'Location', 'northwest')
 xlabel('Time (s)')
 ylabel({'Friction Force (N)', 'Velocity (m/s)'})
-sgtitle('Simulation of stick-slip motion')
+sgtitle('Simulation of stick-slip motion') % requires 2018b
 axis([0, tmax, 0, 2])
 grid
