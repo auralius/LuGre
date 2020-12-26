@@ -172,9 +172,9 @@ end
 x_dot = gradient(x)/ts;
 
 figure 
-title('Simulation of stick-slip motion')
 
 subplot(2,1,1)
+title('Simulation of stick-slip motion')
 hold on 
 plot(t,x(2:end),'b')
 plot(t,y,'r')
