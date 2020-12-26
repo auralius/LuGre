@@ -1,3 +1,5 @@
+[![View LuGre friction model in MATLAB on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/84792-lugre-friction-model-in-matlab)
+
 Reconstruction of a paper: A new model for control systems with friction  
 By: Canudas de Wit et al., 1995, IEEE Transactions on Automatic Control  
 
