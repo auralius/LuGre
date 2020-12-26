@@ -3,6 +3,16 @@ clear all;
 close all;
 clc;
 
+disp('The simulatoin does take quite some time, be patient :-)')
+disp('In my Lenovo x230 (i5-3320M, 2.6GHz, 16GB RAM), it takes about 20 seconds')
+
+% Convention:
+% F -> friction force by the LuGre method
+% u -> force appied to the mass 
+
+%% ------------------------------------------------------------------------
+tic
+
 %% See Table I from the paper
 
 sigma_0 = 1e5;
@@ -29,7 +39,7 @@ ylabel('Friction force (N)')
 title('Friction force at steady state condition')
 
 %% Zoom into certain velocity to see its transient behaviour 
-%  This is not shown in the paper.We here want ti demonstrate that the 
+%  This is not shown in the paper. We here want ti demonstrate that the 
 %  friction has a transient behaviour
 
 clear F v;
@@ -100,26 +110,27 @@ ts = 1e-3;
 clear F v
 
 M = 1; % a unit mass
-F_max = 0.95 * Fs;
-F1 = generate_ramp_signal(0, F_max, 10, ts);
-F2 = generate_ramp_signal(F_max, F_max, 5, ts);
-F3 = generate_ramp_signal(F_max, -F_max, 20, ts);
-F4 = generate_ramp_signal(-F_max, -F_max, 5, ts);
-F5 = generate_ramp_signal(-F_max, F_max, 20, ts);
-F6 = generate_ramp_signal(F_max, F_max, 5, ts);
 
-F = [F1 F2 F3 F4 F5 F6];
+u_max = 0.95 * Fs;
+u1 = generate_ramp_signal(0, u_max, 10, ts);
+u2 = generate_ramp_signal(u_max, u_max, 5, ts);
+u3 = generate_ramp_signal(u_max, -u_max, 20, ts);
+u4 = generate_ramp_signal(-u_max, -u_max, 5, ts);
+u5 = generate_ramp_signal(-u_max, u_max, 20, ts);
+u6 = generate_ramp_signal(u_max, u_max, 5, ts);
 
-f = 0;
+u = [u1 u2 u3 u4 u5 u6];
+
+F = 0;
 z = 0;
 v_0 = 0;
 x_0 = 0;
 v = v_0;
 
-for i = 1:length(F)
-    [f(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
+for i = 1:length(u)
+    [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
     
-    a = (F(i)-f(i)) / M;
+    a = (u(i)-F(i)) / M;
     v = v_0 + a * ts;
     x(i) = x_0 + v*ts;
     
@@ -139,7 +150,7 @@ title('Presliding displacement')
 % A unit mass is attached to a spring with stiffness k = 2 N/m. The end of
 % the spring is pulled with constant velocity, i.e., dy/dt = 0.1 m/s. 
 
-clear F v;
+clear F v u;
 
 k = 2;
 
@@ -150,19 +161,18 @@ t = 0 : ts : time_span;
 y = generate_ramp_signal(0, time_span*0.1, time_span, ts);
 x = 0;
 
-f = 0;
 z = 0;
 v_0 = 0;
 x_0 = 0;
 v = v_0;
 
 for i = 1:length(y)  
-    [f(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
-    f_spring = k*(y(i) - x(i));
+    [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
+    u_spring = k*(y(i) - x(i));
     
-    a = (f_spring - f(i)) / M;
+    a = (u_spring - F(i)) / M;
     v = v_0 + a * ts;
-    x(i+1) = x_0 + v*ts;
+    x(i+1) = x_0 + v * ts;
     
     x_0 = x(i+1);
     v_0 = v;
@@ -186,7 +196,7 @@ subplot(2,1,2)
 hold on
 
 yyaxis left
-plot(t,f);
+plot(t,F);
 ylabel('Friction Force (N)')
 ylim([0 1.5])
 
@@ -205,7 +215,7 @@ xlabel('Time (s)')
 % increase in the velocity could be observed. 
 %
 % We simplify this by checking the first negative gradient of the force. 
-% This is actually very dit=fficult, the risk of going unstable is very
+% This is actually very difficult, the risk of going unstable is very
 % high here, especially at higer force rate.
 %
 % As soon as we detect the first negative gradient of the force, we must
@@ -217,40 +227,43 @@ t = 0 : ts : time_span;
 
 M = 1; % a unit mass
 
-f_rate = [1 2 3 4 5 10 20 30 40 45 50];
+F_rate = [1 2 3 4 5 10 20 30 40 45 50];
 
-for j = 1 : length(f_rate)
+for j = 1 : length(F_rate)
     
-    clear F f v x
+    clear F v x
 
-    F = generate_ramp_signal(0, f_rate(j)*time_span, time_span, ts);
+    u = generate_ramp_signal(0, F_rate(j)*time_span, time_span, ts);
 
-    f = 0;
+    F = 0;
     z = 0;
     v_0 = 0;
     x_0 = 0;
     v = v_0;
 
-    for i = 1:length(F)
-        [f(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
+    for i = 1:length(u)
+        [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
 
-        a = (F(i)-f(i)) / M;
+        a = (u(i)-F(i)) / M;
         v = v_0 + a * ts;
         x(i) = x_0 + v*ts;
 
         x_0 = x(i);
         v_0 = v;
 
-        if i > 1 && (f(i)-f(i-1)) < 0
+        if i > 1 && (F(i)-F(i-1)) < 0
             break;
         end
     end
-    f_break(j) = f(i);
+    F_break(j) = F(i);
 end
 
 figure 
 hold on
-plot(f_rate, f_break, 'o')
+plot(F_rate, F_break, 'o')
 ylim([0.9 1.5])
 xlabel('Force rate (N/s)')
 ylabel('Break-away force (N)')
+
+%% ------------------------------------------------------------------------
+toc
