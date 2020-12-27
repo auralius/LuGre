@@ -33,12 +33,12 @@ Fig. 2 of the paper
 
 -------------------------------
 
-Fig. 4 of the paper
+Fig. 6 of the paper
 
 ![fig5](https://github.com/auralius/LuGre/blob/master/fig5.png)
 
 -------------------------------
 
-Fig. 6 of the paper
+Fig. 4 of the paper
 
 ![fig6](https://github.com/auralius/LuGre/blob/master/fig6.png)
