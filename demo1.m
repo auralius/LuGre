@@ -3,8 +3,9 @@ clear all;
 close all;
 clc;
 
-disp('The simulatoin does take quite some time, be patient :-)')
-disp('In my Lenovo x230 (i5-3320M, 2.6GHz, 16GB RAM), it takes about 20 seconds')
+disp('The simulation does take quite some time, be patient :-)')
+disp('In my Lenovo x230 (i5-3320M, 2.6GHz, 16GB RAM), it takes about 30 seconds')
+disp ('I use MATLAB R2018b')
 
 % Convention:
 % F -> friction force by the LuGre method
@@ -39,8 +40,8 @@ ylabel('Friction force (N)')
 title('Friction force at steady state condition')
 
 %% Zoom into certain velocity to see its transient behaviour 
-%  This is not shown in the paper. We here want ti demonstrate that the 
-%  friction has a transient behaviour
+%  This is not shown in the paper. We here want to demonstrate that the 
+%  LuGre friction model does have a transient behaviour.
 
 clear F v;
 
@@ -60,13 +61,13 @@ plot(t, F);
 grid
 xlabel('Time (s)')
 ylabel('Friction force (N)')
-title('Friction force for v = 0.002')
+title('Friction force for v = 0.002 m/s')
 xlim([0 0.1]);
 
 %% Apply sinusoidal velocity and measure the friction force (Fig. 3 of the paper)
 % The input to the friction model was the velocity which was changed
 % sinusoidally around an equilibrium. The resulting friction force is given 
-% as a function of velocity 
+% as a function of velocity .
 
 figure
 hold on
@@ -104,7 +105,7 @@ legend('1 rad/s', '10 rad/s', '25 rad/s')
 % applied force was slowly ramped up to 1.425 N which is 95 percents of Fs. 
 % The force was then kept constant for a while and later ramped down to the 
 % value -1.425 N, where it was kept constant and then ramped up to 1.425 N 
-% again
+% again.
 
 ts = 1e-3;
 clear F v
@@ -123,19 +124,17 @@ u = [u1 u2 u3 u4 u5 u6];
 
 F = 0;
 z = 0;
-v_0 = 0;
 x_0 = 0;
-v = v_0;
+v = 0;
 
 for i = 1:length(u)
     [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
     
     a = (u(i)-F(i)) / M;
-    v = v_0 + a * ts;
+    v = v + a * ts;
     x(i) = x_0 + v*ts;
     
     x_0 = x(i);
-    v_0 = v;
 end
 
 figure
@@ -150,7 +149,7 @@ title('Presliding displacement')
 % A unit mass is attached to a spring with stiffness k = 2 N/m. The end of
 % the spring is pulled with constant velocity, i.e., dy/dt = 0.1 m/s. 
 
-clear F v u;
+clear F v u u1 u2 u3 u4 u5 u6;
 
 k = 2;
 
@@ -162,20 +161,18 @@ y = generate_ramp_signal(0, time_span*0.1, time_span, ts);
 x = 0;
 
 z = 0;
-v_0 = 0;
 x_0 = 0;
-v = v_0;
+v = 0;
 
 for i = 1:length(y)  
     [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
     u_spring = k*(y(i) - x(i));
     
     a = (u_spring - F(i)) / M;
-    v = v_0 + a * ts;
+    v = v + a * ts;
     x(i+1) = x_0 + v * ts;
     
     x_0 = x(i+1);
-    v_0 = v;
 end
 
 % compute the speed of the unit-mass
@@ -188,7 +185,7 @@ title('Simulation of stick-slip motion')
 hold on 
 plot(t,x(2:end),'b')
 plot(t,y,'r')
-legend('x', 'y', 'Location','best')
+legend('$x$', '$y$', 'Location','best','interpreter','latex')
 xlabel('Time (s)')
 ylabel('Position (m)')
 
@@ -202,7 +199,7 @@ ylim([0 1.5])
 
 yyaxis right
 plot(t,x_dot(2:end));
-ylabel('Velocity (m/s)')
+ylabel('$\frac{dx}{dt}$ (m/s)', 'interpreter','latex')
 ylim([0 1.5])
 
 xlabel('Time (s)')
@@ -231,25 +228,23 @@ F_rate = [1 2 3 4 5 10 20 30 40 45 50];
 
 for j = 1 : length(F_rate)
     
-    clear F v x
+    clear F v x x_dot
 
     u = generate_ramp_signal(0, F_rate(j)*time_span, time_span, ts);
 
     F = 0;
     z = 0;
-    v_0 = 0;
     x_0 = 0;
-    v = v_0;
+    v = 0;
 
     for i = 1:length(u)
         [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
 
         a = (u(i)-F(i)) / M;
-        v = v_0 + a * ts;
+        v = v + a * ts;
         x(i) = x_0 + v*ts;
 
         x_0 = x(i);
-        v_0 = v;
 
         if i > 1 && (F(i)-F(i-1)) < 0
             break;
@@ -264,6 +259,55 @@ plot(F_rate, F_break, 'o')
 ylim([0.9 1.5])
 xlabel('Force rate (N/s)')
 ylabel('Break-away force (N)')
+grid on
+
+%% Limit cycles caused by friction
+%  Also known as hunting phenomenon because of the integral action.
+
+clear F x y u;
+
+ts = 1e-5; % 1e-4 fails, very stiff system, needs a better ODE solver
+time_span = 100;
+t = 0 : ts : time_span;
+
+% PID parameters
+Kv = 6;
+Kp = 3;
+Ki = 4;
+
+% Desired position for the mass, its intial position is x = 0
+xd = 1;
+
+z = 0;
+x_0 = 0;
+v = 0;
+x = x_0;
+
+int_e = 0;
+
+for i = 1:length(t)
+    [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
+    
+    e = x(i) - xd;
+    int_e = int_e + e * ts; 
+    u = -Kv*v - Kp*e - Ki*int_e; % eq. 11
+    
+    a = (u - F(i)) / M;
+    v = v + a * ts;
+    x(i+1) = x_0 + v * ts;
+    
+    x_0 = x(i+1);
+end
+
+figure
+hold on
+plot(t, x(2:end))
+plot(t, ones(1,length(t)).*xd);
+xlabel('Time (s)')
+ylabel('Position (m)')
+legend('$x$', '$x_{d}$', 'Interpreter','Latex')
+
+clear all;
 
 %% ------------------------------------------------------------------------
 toc
