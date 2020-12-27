@@ -42,3 +42,9 @@ Fig. 6 of the paper
 Fig. 4 of the paper
 
 ![fig6](https://github.com/auralius/LuGre/blob/master/fig6.png)
+
+-------------------------------
+
+Fig. 8 of the paper
+
+![fig6](https://github.com/auralius/LuGre/blob/master/fig7.png)
