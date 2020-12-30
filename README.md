@@ -1,11 +1,21 @@
 [![View LuGre friction model in MATLAB on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/84792-lugre-friction-model-in-matlab)
 
-Reconstruction of a paper: A new model for control systems with friction  
+Reconstruction of the paper: A new model for control systems with friction  
 By: Canudas de Wit et al., 1995, IEEE Transactions on Automatic Control  
 
 I am trying to reconstruct as many figures as possible from the paper above.  
 
 Link to the paper: https://ieeexplore.ieee.org/document/376053  
+
+There are 2 m-files:
+
+1. demo1.m
+
+This is the first attempt of recontructing the paper. I use the basic Euler method here to perform the integration. It takes more time to complete the simulation since a high sampling rate is necessary to mantain the stability. The system itself is a very stiff ODE.
+
+2. demo2.m
+
+This is the second attempt. Here, I use the built-in MATLAB solver: ode23s, which is desigend for a stiff system. Thus, it takes less time to complete the simulatin. In order to use MATLAB built-in solver, the problem must be first formalized. Plese see the PDF file [here](./problem_formalization.pdf).
 
 -------------------------------
 
