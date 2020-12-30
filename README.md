@@ -11,11 +11,11 @@ There are 2 m-files:
 
 1. demo1.m
 
-This is the first attempt of recontructing the paper. I use the basic Euler method here to perform the integration. It takes more time to complete the simulation since a high sampling rate is necessary to mantain the stability. The system itself is a very stiff ODE.
+This is the first attempt at reconstructing the paper. I use the basic Euler method here to perform the integration. It takes more time to complete the simulation since a high sampling rate is necessary to mantain stability. The system itself is a very stiff ODE.
 
 2. demo2.m
 
-This is the second attempt. Here, I use the built-in MATLAB solver: ode23s, which is desigend for a stiff system. Thus, it takes less time to complete the simulatin. In order to use MATLAB built-in solver, the problem must be first formalized. Plese see the PDF file [here](./problem_formalization.pdf).
+This is the second attempt at reconstructing the paper. Here, I use the built-in MATLAB solver: ode23s, which is designed for a stiff system. Thus, it takes less time to complete the simulation. In order to use MATLAB built-in solver, the problem must be first formalized. Plese see the PDF file [here](./problem_formalization.pdf).
 
 -------------------------------
 
