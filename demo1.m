@@ -73,7 +73,7 @@ figure
 hold on
 color = 'rgb';
 
-clear F v;
+clear F Fss v;
 
 ts = 1e-3;
 time_span = 20;
@@ -306,6 +306,7 @@ plot(t, ones(1,length(t)).*xd);
 xlabel('Time (s)')
 ylabel('Position (m)')
 legend('$x$', '$x_{d}$', 'Interpreter','Latex')
+title('PID Simulation')
 
 clear all;
 
