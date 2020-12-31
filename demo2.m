@@ -4,12 +4,12 @@ close all;
 clc;
 
 disp('The simulation does take quite some time, be patient :-)')
-disp('In my Lenovo x230 (i5-3320M, 2.6GHz, 16GB RAM), it takes about 11 seconds')
+disp('In my Lenovo x230 (i5-3320M, 2.6GHz, 16GB RAM), it takes about 6 seconds')
 disp ('I use MATLAB R2018b')
 
 % Convention:
 % F -> friction force by the LuGre method
-% u -> force appied to the mass 
+% u -> force applied to the mass 
 
 %% ------------------------------------------------------------------------
 tic
@@ -255,7 +255,7 @@ M = 1; % Unit-mass
 xd = 1; % Desired position
 
 % Use ode23s
-[t_sol, q_sol] = ode23s(@sim_pid, time_span, q_initial, options, ...
+[t_sol, q_sol] = ode23s(@sim_pid, time_span, q_initial, [], ...
                         M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs, xd);   
 
 figure

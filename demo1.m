@@ -9,7 +9,7 @@ disp ('I use MATLAB R2018b')
 
 % Convention:
 % F -> friction force by the LuGre method
-% u -> force appied to the mass 
+% u -> force applied to the mass 
 
 %% ------------------------------------------------------------------------
 tic
