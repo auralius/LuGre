@@ -17,6 +17,10 @@ This is the first attempt at reconstructing the paper. I use the basic Euler met
 
 This is the second attempt at reconstructing the paper. Here, I use the built-in MATLAB solver: ode23s, which is designed for a stiff system. Thus, it takes less time to complete the simulation. In order to use MATLAB built-in solver, the problem must be first formalized. Plese see the PDF file [here](./problem_formalization.pdf).
 
+3. demo3.m
+
+This is an additional simulation to demonstrate the friction observer. This is not shown in the paper. Basically, this is a numerical simulation of section V.B, for position control with a unit-step input.
+
 -------------------------------
 
 Not shown in the paper
@@ -58,3 +62,9 @@ Fig. 4 of the paper
 Fig. 8 of the paper
 
 ![fig6](https://github.com/auralius/LuGre/blob/master/fig7.png)
+
+-------------------------------
+
+Not shown in the paper
+
+![fig6](https://github.com/auralius/LuGre/blob/master/fig8.png)
