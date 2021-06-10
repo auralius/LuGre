@@ -1,9 +1,10 @@
 %% Demo of frictio compensation
-%  For H(s), we selected the same PID control as in Section V.A.
-%  We will use a unit-mass and the same parameter as in Table I.
+% What the paper doesn't say is that if you tune the PI and velocity gains, the performance is better then the friction
+% observer. 
 %
 % The given input xd is a step function, thus the second derivative of xd
 % is zero. The last term of Eq. 14 is removed.
+%
 
 %%
 clear;
@@ -13,7 +14,7 @@ clc;
 %% ------------------------------------------------------------------------
 tic
 
-%% See Table I from the paper
+%% Input Parameter for optimally tuned PI and velocity gains
 
 sigma_0 = 1e5;
 sigma_1  = sqrt(1e5);
@@ -23,12 +24,11 @@ Fs = 1.5;
 vs = 0.001;
 
 % Controller gains
-Kp = 3;
-Ki = 4;
-Kv = 6;
-k = 10;
+Kp = 609.4;
+Ki = 0;
+Kv = 40.2;
+k = 0;
 
-%%
 clear F t_sol q_sol;
 
 time_span = [0 10]; % Let the solver pick its own sapmling rate;
@@ -50,3 +50,4 @@ xlabel('Time (s)')
 ylabel('Position (m)')
 legend('$x$', '$x_{d}$', 'Interpreter','Latex')
 title('PID position control with friction observer')
+

@@ -1,5 +1,5 @@
 %%
-clear all;
+clear;
 close all;
 clc;
 
@@ -28,9 +28,7 @@ vs = 0.001;
 
 v = -0.005:0.0001:0.005;
 
-for i = 1 : length(v)   
-    Fss(i) = lugref_ss(v(i), Fc, Fs, vs, sigma_2);
-end
+Fss = lugref_ss(v, Fc, Fs, vs, sigma_2);
 
 figure
 plot(v, Fss)
@@ -52,6 +50,9 @@ t_sol = 0 : ts : time_span;
 v = 0.002;
 z = 0;
 
+
+% Note, this is forward euler integration of the ODE for z. - Jason Nicholson
+F = nan(size(t_sol));
 for j = 1 : length(t_sol)
     [F(j), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
 end
@@ -81,6 +82,8 @@ t_sol = 0 : ts : time_span;
 
 omega = [1 10 25];
 
+% Note, this is forward euler integration of the ODE for z. - Jason Nicholson
+F = nan(size(t_sol));
 for i = 1 : length(omega)
     z = 0;
     v = 1e-3 * (cos(omega(i)*t_sol)+1.5); % sine also works
@@ -121,11 +124,7 @@ M = 1; % Unit-mass
 
 % The problem is, there is no clean way to pass out other results with
 % the built-in solver. We have to recompute the friction force.
-for k = 1:length(t_sol)
-    zdot = q_sol(k,2) - ( (q_sol(k,3)*abs(q_sol(k,2))*sigma_0) / ...
-           (Fc+(Fs-Fc)*exp(-(q_sol(k,2)/vs)^2)) );
-    F(k) = sigma_0*q_sol(k,3) + sigma_1 * zdot + sigma_2*q_sol(k,2);
-end
+[~,zdot,F] = sim_stick_slip(t_sol, q_sol', M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs);
 
 figure 
 
@@ -171,6 +170,7 @@ clear F t_sol q_sol;
 
 F_rate = [1 2 3 4 5 10 15 20 25 30 35 40 45 50];
 
+F_break = nan(size(F_rate));
 for j = 1 : length(F_rate)
     
     time_span = [0 2]; % Let the solver pick its own sapmling rate;
@@ -185,6 +185,7 @@ for j = 1 : length(F_rate)
 
     % The problem is, there is no clean way to pass out other results with
     % the built-in solver. We have to recompute the friction force.
+    F = nan(size(t_sol));
     for k = 1:length(t_sol)
         zdot = q_sol(k,2) - ( (q_sol(k,3)*abs(q_sol(k,2))*sigma_0) / ...
                (Fc+(Fs-Fc)*exp(-(q_sol(k,2)/vs)^2)) );
@@ -213,8 +214,6 @@ grid on
 % value -1.425 N, where it was kept constant and then ramped up to 1.425 N 
 % again.
 
-M = 1; % a unit mass
-
 clear F t_sol q_sol;
     
 time_span = [0 65]; % Let the solver pick its own sapmling rate;
@@ -230,6 +229,7 @@ options = odeset('RelTol',1e-8,'AbsTol',1e-10); % for a perfect hysteresis
 
 % The problem is, there is no clean way to pass out other results with
 % the built-in solver. We have to recompute the friction force.
+F = nan(size(t_sol));
 for k = 1:length(t_sol)
     zdot = q_sol(k,2) - ( (q_sol(k,3)*abs(q_sol(k,2))*sigma_0) / ...
            (Fc+(Fs-Fc)*exp(-(q_sol(k,2)/vs)^2)) );
@@ -266,8 +266,6 @@ xlabel('Time (s)')
 ylabel('Position (m)')
 legend('$x$', '$x_{d}$', 'Interpreter','Latex')
 title('PID Simulation')
-
-clear all;
 
 %%
 toc

@@ -9,10 +9,6 @@ Link to the paper: https://ieeexplore.ieee.org/document/376053
 
 There are 2 m-files:
 
-1. demo1.m
-
-This is the first attempt at reconstructing the paper. I use the basic Euler method here to perform the integration. It takes more time to complete the simulation since a high sampling rate is necessary to mantain stability. The system itself is a very stiff ODE.
-
 2. demo2.m
 
 This is the second attempt at reconstructing the paper. Here, I use the built-in MATLAB solver: ode23s, which is designed for a stiff system. Thus, it takes less time to complete the simulation. In order to use MATLAB built-in solver, the problem must be first formalized. Plese see the PDF file [here](./problem_formalization.pdf).
@@ -21,50 +17,60 @@ This is the second attempt at reconstructing the paper. Here, I use the built-in
 
 This is an additional simulation to demonstrate the friction observer. This is not shown in the paper. Basically, this is a numerical simulation of section V.B, for position control with a unit-step input.
 
--------------------------------
+4. demo4.m 
 
-Not shown in the paper
-
-![fig1](https://github.com/auralius/LuGre/blob/master/fig1.png)
+This shows optimally tuned PI and velocity gain without the friction observer. The performance is superior to the friction observer with poorly tuned PI and velocity gains.
 
 -------------------------------
 
-Not shown in the paper
+Not shown in the paper. Run demo2.
 
-![fig2](https://github.com/auralius/LuGre/blob/master/fig2.png)
-
--------------------------------
-
-Fig. 3 of the paper
-
-![fig3](https://github.com/auralius/LuGre/blob/master/fig3.png)
+![fig1](fig1.png)
 
 -------------------------------
 
-Fig. 2 of the paper
+Not shown in the paper. Run demo2.
 
-![fig4](https://github.com/auralius/LuGre/blob/master/fig4.png)
-
--------------------------------
-
-Fig. 6 of the paper
-
-![fig5](https://github.com/auralius/LuGre/blob/master/fig5.png)
+![fig2](fig2.png)
 
 -------------------------------
 
-Fig. 4 of the paper
+Fig. 3 of the paper. Run demo2.
 
-![fig6](https://github.com/auralius/LuGre/blob/master/fig6.png)
-
--------------------------------
-
-Fig. 8 of the paper
-
-![fig6](https://github.com/auralius/LuGre/blob/master/fig7.png)
+![fig3](fig3.png)
 
 -------------------------------
 
-Not shown in the paper
+Fig. 2 of the paper. Run demo2.
 
-![fig6](https://github.com/auralius/LuGre/blob/master/fig8.png)
+![fig4](fig4.png)
+
+-------------------------------
+
+Fig. 6 of the paper. Run demo2.
+
+![fig5](fig5.png)
+
+-------------------------------
+
+Fig. 4 of the paper. Run demo2.
+
+![fig6](fig6.png)
+
+-------------------------------
+
+Fig. 8 of the paper. Run demo2.
+
+![fig6](fig7.png)
+
+-------------------------------
+
+Not shown in the paper. Run demo3.
+
+![fig6](fig8.png)
+
+-------------------------------
+
+Note that if the PI and velocity gains are optimally tuned, then the performance is better than the friction observer. Rise time is smaller and overshoot is smaller. This model is generally easier to tune. Run demo4.
+
+![fig6](fig9.png)

@@ -1,4 +1,4 @@
-function xdot = sim_pid(t, q, M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs, xd)
+function xdot = sim_pid(~, q, M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs, xd)
     Kp = 3;
     Ki = 4;
     Kv = 6;
