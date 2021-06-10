@@ -12,7 +12,7 @@ function xdot = sim_fiction_compensation(t, q, M, Fs, Fc, sigma_0, sigma_1, sigm
     % here we use similar values as in Table I
     k = 10;
     zdot_tilde = q(2) - ( (q(5)*abs(q(2))*sigma_0) / (Fc+(Fs-Fc)*exp(-(q(2)/vs)^2)) ) -k*e;
-    F_tilde =  sigma_0*q(3) + sigma_1 * zdot_tilde + sigma_2*q(2);
+    F_tilde =  sigma_0*q(5) + sigma_1 * zdot_tilde + sigma_2*q(2);
     
     u = -Kv*q(2)-Kp*e-Ki*q(4) + F_tilde; % the input here is a step function, second derivative of xd is zero
     
