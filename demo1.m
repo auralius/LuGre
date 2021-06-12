@@ -88,8 +88,8 @@ for i = 1 : length(omega)
         [F(j), z] = lugref(z, v(j), Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
     end
     
-    % Start from t = 5, at the begining, the F response is unconsistent
-    % since we don't know hwo to initialize z.
+    % Start from t = 5, at the begining, the F response is inconsistent
+    % since we don't know how to initialize z. Here, we initialize z with 0.
     plot(v(5/ts:end), F(5/ts:end), color(i));
 end
 
@@ -112,7 +112,7 @@ clear F v
 
 M = 1; % a unit mass
 
-u_max = 0.95 * Fs;
+u_max = 0.95 * Fs; % 95 %
 u1 = generate_ramp_signal(0, u_max, 10, ts);
 u2 = generate_ramp_signal(u_max, u_max, 5, ts);
 u3 = generate_ramp_signal(u_max, -u_max, 20, ts);
@@ -120,13 +120,15 @@ u4 = generate_ramp_signal(-u_max, -u_max, 5, ts);
 u5 = generate_ramp_signal(-u_max, u_max, 20, ts);
 u6 = generate_ramp_signal(u_max, u_max, 5, ts);
 
-u = [u1 u2 u3 u4 u5 u6];
+u = [u1 u2 u3 u4 u5 u6]; % put them together
 
+% Some initializations
 F = 0;
 z = 0;
 x_0 = 0;
 v = 0;
 
+% Do the simulation for all input u
 for i = 1:length(u)
     [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
     
@@ -151,19 +153,24 @@ title('Presliding displacement')
 
 clear F v u u1 u2 u3 u4 u5 u6;
 
-k = 2;
+k = 2; % stiffness k = 2 N/m
 
-ts = 1e-6; % 1e-4 fails!, very stiff system, needs a better ODE solver
+ts = 1e-6; % 1e-4 fails, this is very stiff system, we need a better ODE solver
 time_span = 30;
 t = 0 : ts : time_span;
 
+% generate_ramp_signal(min_val, max_val, t_max, ts)
+% The velocity is 0.1 m/s, it means if we start from t=0 to t=time_span
+% then our travel distace is 0.1*time_span
 y = generate_ramp_signal(0, time_span*0.1, time_span, ts);
-x = 0;
 
+% Some initializations
+x = 0;
 z = 0;
 x_0 = 0;
 v = 0;
 
+% Do the simulation
 for i = 1:length(y)  
     [F(i), z] = lugref(z, v, Fc, Fs, vs, sigma_0, sigma_1, sigma_2, ts);
     u_spring = k*(y(i) - x(i));
@@ -175,7 +182,7 @@ for i = 1:length(y)
     x_0 = x(i+1);
 end
 
-% compute the speed of the unit-mass
+% Compute the speed of the unit-mass
 x_dot = gradient(x)/ts;
 
 figure 
@@ -218,16 +225,18 @@ xlabel('Time (s)')
 % As soon as we detect the first negative gradient of the force, we must
 % stop.
 
-ts = 1e-6; % very stiff system, needs a better ODE solver
+ts = 1e-6; % very stiff system, we need a better ODE solver
 time_span = 2;
 t = 0 : ts : time_span;
 
 M = 1; % a unit mass
 
+% I am just guessing from Fig. 4
 F_rate = [1 2 3 4 5 10 20 30 40 45 50];
 
 for j = 1 : length(F_rate)
     
+    % Always clear up the old values
     clear F v x x_dot
 
     u = generate_ramp_signal(0, F_rate(j)*time_span, time_span, ts);
@@ -246,6 +255,8 @@ for j = 1 : length(F_rate)
 
         x_0 = x(i);
 
+        % When motion occurs, the resulting force suddenly drops
+        % See Fig. 6 (bottom figure)
         if i > 1 && (F(i)-F(i-1)) < 0
             break;
         end
@@ -278,11 +289,13 @@ Ki = 4;
 % Desired position for the mass, its intial position is x = 0
 xd = 1;
 
+% Some initializations
 z = 0;
 x_0 = 0;
 v = 0;
 x = x_0;
 
+% The integral of error with respect to time
 int_e = 0;
 
 for i = 1:length(t)
