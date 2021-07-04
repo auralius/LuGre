@@ -190,6 +190,9 @@ for j = 1 : length(F_rate)
         zdot = q_sol(k,2) - ( (q_sol(k,3)*abs(q_sol(k,2))*sigma_0) / ...
                (Fc+(Fs-Fc)*exp(-(q_sol(k,2)/vs)^2)) );
         F(k) = sigma_0*q_sol(k,3) + sigma_1 * zdot + sigma_2*q_sol(k,2);
+        
+        % When motion occurs, the resulting force suddenly drops
+        % See Fig. 6 (bottom figure)
         if (k>1) && (F(k)-F(k-1)<0)
             break;
         end
