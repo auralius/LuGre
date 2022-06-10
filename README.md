@@ -1,21 +1,16 @@
 [![View LuGre friction model in MATLAB on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/84792-lugre-friction-model-in-matlab)
 
-Reconstruction of the paper: A new model for control systems with friction  
-By: Canudas de Wit et al., 1995, IEEE Transactions on Automatic Control  
+This is a *full reconstruction* of the paper: **A new model for control systems with friction** by Canudas de Wit et al. The paper was published in 1995 (IEEE Transactions on Automatic Control). It can be found in the following link: https://ieeexplore.ieee.org/document/376053  
 
-I am trying to reconstruct as many figures as possible from the paper above.  
-
-Link to the paper: https://ieeexplore.ieee.org/document/376053  
-
-There are 2 m-files:
+In this repository, there are 3 main m-files:
 
 2. demo2.m
 
-This is the second attempt at reconstructing the paper. Here, I use the built-in MATLAB solver: ode23s, which is designed for a stiff system. Thus, it takes less time to complete the simulation. In order to use MATLAB built-in solver, the problem must be first formalized. Plese see the PDF file [here](./problem_formalization.pdf).
+Here, we use the built-in MATLAB solver: ode23s. This solver is designed for a stiff system. In order to use MATLAB built-in solver, the problem must be first formalized. Plese see the PDF file [here](./problem_formalization.pdf).
 
 3. demo3.m
 
-This is an additional simulation to demonstrate the friction observer. This is not shown in the paper. Basically, this is a numerical simulation of section V.B, for position control with a unit-step input.
+This is an additional simulation to demonstrate the friction observer. This is not shown in the paper. Basically, this is the numerical simulation of section V.B, for position control with a unit-step input.
 
 4. demo4.m 
 
