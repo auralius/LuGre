@@ -1,6 +1,6 @@
 %% Demo of frictio compensation
 % What the paper doesn't say is that if you tune the PI and velocity gains, the performance is better then the friction
-% observer. 
+% observer.
 %
 % The given input xd is a step function, thus the second derivative of xd
 % is zero. The last term of Eq. 14 is removed.
@@ -39,8 +39,9 @@ xd = 1; % Desired position
 
 % Use ode23s
 options = odeset('RelTol',1e-6,'AbsTol',1e-7); % for a perfect hysteresis
-[t_sol, q_sol] = ode23s(@sim_fiction_compensation, time_span, q_initial, [], ...
-                        M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs, xd,Kp,Ki,Kv,k);   
+[t_sol, q_sol] = ode23s(@(t,x)sim_fiction_compensation(t, x, M, Fs, Fc, ...
+                 sigma_0, sigma_1, sigma_2, vs, xd, Kp, Ki, Kv, k), ...
+                 time_span, q_initial);
 
 figure
 hold on
@@ -48,6 +49,6 @@ plot(t_sol, q_sol(:,1))
 plot(t_sol, ones(1,length(t_sol)).*xd);
 xlabel('Time (s)')
 ylabel('Position (m)')
-legend('$x$', '$x_{d}$', 'Interpreter','Latex')
+legend('x', 'x_{d}', 'Interpreter','tex')
 title('PID position control with friction observer')
 
