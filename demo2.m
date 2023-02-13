@@ -9,7 +9,7 @@ disp ('I use MATLAB R2018b')
 
 % Convention:
 % F -> friction force by the LuGre method
-% u -> force applied to the mass 
+% u -> force applied to the mass
 
 %% ------------------------------------------------------------------------
 tic
@@ -37,8 +37,8 @@ xlabel('Velocity (m/s)')
 ylabel('Friction force (N)')
 title('Friction force at steady state condition')
 
-%% Zoom into certain velocity to see its transient behaviour 
-%  This is not shown in the paper. We here want to demonstrate that the 
+%% Zoom into certain velocity to see its transient behaviour
+%  This is not shown in the paper. We here want to demonstrate that the
 %  LuGre friction model does have a transient behaviour.
 
 clear F Fss v;
@@ -67,7 +67,7 @@ xlim([0 0.1]);
 
 %% Apply sinusoidal velocity and measure the friction force (Fig. 3)
 % The input to the friction model was the velocity which was changed
-% sinusoidally around an equilibrium. The resulting friction force is given 
+% sinusoidally around an equilibrium. The resulting friction force is given
 % as a function of velocity .
 
 figure
@@ -91,7 +91,7 @@ for i = 1 : length(omega)
         [F(j), z] = lugref(z, v(j), Fc, Fs, vs, sigma_0, sigma_1, ...
                            sigma_2, ts);
     end
-    
+
     % Start from t = 5, at the begining, the F response is unconsistent
     % since we don't know hwo to initialize z.
     plot(v(5/ts:end), F(5/ts:end), color(i));
@@ -105,61 +105,56 @@ legend('1 rad/s', '10 rad/s', '25 rad/s')
 
 %% Presliding displacement (fig. 2)
 
-% An external force was applied to a unit mass subjected to friction. The 
-% applied force was slowly ramped up to 1.425 N which is 95 percents of Fs. 
-% The force was then kept constant for a while and later ramped down to the 
-% value -1.425 N, where it was kept constant and then ramped up to 1.425 N 
+% An external force was applied to a unit mass subjected to friction. The
+% applied force was slowly ramped up to 1.425 N which is 95 percents of Fs.
+% The force was then kept constant for a while and later ramped down to the
+% value -1.425 N, where it was kept constant and then ramped up to 1.425 N
 % again.
 
 clear F v
-    
+
 time_span = [0 30]; % Let the solver pick its own sapmling rate;
 
 q_initial = [0 0 0];
 M = 1; % Unit-mass
-    
+
 % Use ode23s
-[t_sol, q_sol] = ode23s(@sim_stick_slip, time_span, q_initial, [], ...
-                        M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs);   
+[t_sol, q_sol] = ode23s(@(t, x)sim_stick_slip(t, x, M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs), time_span, q_initial);
 
 % The problem is, there is no clean way to pass out other results with
 % the built-in solver. We have to recompute the friction force.
 [~,zdot,F] = sim_stick_slip(t_sol, q_sol', M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs);
 
-figure 
+figure
 
 subplot(2,1,1)
 title('Simulation of stick-slip motion')
-hold on 
+hold on
 plot(t_sol, q_sol(:,1),'b')
 plot(t_sol, 0.1*t_sol,'r')
-legend('$x$', '$y$', 'Location','best','interpreter','latex')
+legend('x', 'y', 'Location','northeast','interpreter','tex')
 xlabel('Time (s)')
 ylabel('Position (m)')
 
 subplot(2,1,2)
 hold on
 
-yyaxis left
-plot(t_sol, F);
-ylabel('Friction Force (N)')
-ylim([0 1.5])
-
-yyaxis right
-plot(t_sol, q_sol(:,2));
-ylabel('$\frac{dx}{dt}$ (m/s)', 'interpreter','latex')
-ylim([0 1.5])
-
+ax = plotyy(t_sol, F, t_sol, q_sol(:,2));
 xlabel('Time (s)')
+ylabel(ax(1), 'Friction Force (N)')
+ylabel(ax(2), 'dx/dt (m/s)', 'interpreter','tex')
+ylim(ax(1), [0 1.5])
+ylim(ax(2), [0 1.5])
+
 
 %% Varying Break-Away Force (Fig. 4)
 
-% A force applied to a unit mass was ramped up at different rates, and the 
-% friction force when the mass started to slide was determined. ........ 
-% The break-away force was therefore determined at the time where a sharp 
-% increase in the velocity could be observed. 
+% A force applied to a unit mass was ramped up at different rates, and the
+% friction force when the mass started to slide was determined. ........
+% The break-away force was therefore determined at the time where a sharp
+% increase in the velocity could be observed.
 %
-% We simplify this by checking the first negative gradient of the force. 
+% We simplify this by checking the first negative gradient of the force.
 % This is actually very difficult, the risk of going unstable is very
 % high here, especially at higer force rate.
 %
@@ -172,16 +167,16 @@ F_rate = [1 2 3 4 5 10 15 20 25 30 35 40 45 50];
 
 F_break = nan(size(F_rate));
 for j = 1 : length(F_rate)
-    
+
     time_span = [0 2]; % Let the solver pick its own sapmling rate;
 
     q_initial = [0 0 0];
     M = 1; % Unit-mass
 
     % Use ode23s
-    [t_sol, q_sol] = ode23s(@sim_mass_with_ramp_force_input, time_span, ...
-                            q_initial, [], M, Fs, Fc, sigma_0, sigma_1, ...
-                            sigma_2, vs, F_rate(j));   
+    [t_sol, q_sol] = ode23s(@(t,x)sim_mass_with_ramp_force_input(t, x, ...
+                     M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs, F_rate(j)), ...
+                     time_span, q_initial);
 
     % The problem is, there is no clean way to pass out other results with
     % the built-in solver. We have to recompute the friction force.
@@ -190,7 +185,7 @@ for j = 1 : length(F_rate)
         zdot = q_sol(k,2) - ( (q_sol(k,3)*abs(q_sol(k,2))*sigma_0) / ...
                (Fc+(Fs-Fc)*exp(-(q_sol(k,2)/vs)^2)) );
         F(k) = sigma_0*q_sol(k,3) + sigma_1 * zdot + sigma_2*q_sol(k,2);
-        
+
         % When motion occurs, the resulting force suddenly drops
         % See Fig. 6 (bottom figure)
         if (k>1) && (F(k)-F(k-1)<0)
@@ -200,7 +195,7 @@ for j = 1 : length(F_rate)
     F_break(j) = F(k);
 end
 
-figure 
+figure
 hold on
 plot(F_rate, F_break, 'o')
 ylim([0.9 1.5])
@@ -211,24 +206,25 @@ grid on
 
 %% Presliding displacement (Fig. 2)
 
-% An external force was applied to a unit mass subjected to friction. The 
-% applied force was slowly ramped up to 1.425 N which is 95 percents of Fs. 
-% The force was then kept constant for a while and later ramped down to the 
-% value -1.425 N, where it was kept constant and then ramped up to 1.425 N 
+% An external force was applied to a unit mass subjected to friction. The
+% applied force was slowly ramped up to 1.425 N which is 95 percents of Fs.
+% The force was then kept constant for a while and later ramped down to the
+% value -1.425 N, where it was kept constant and then ramped up to 1.425 N
 % again.
 
 clear F t_sol q_sol;
-    
+
 time_span = [0 65]; % Let the solver pick its own sapmling rate;
 
 q_initial = [0 0 0];
 M = 1; % Unit-mass
- 
+
 % Use ode23s
 options = odeset('RelTol',1e-8,'AbsTol',1e-10); % for a perfect hysteresis
 
-[t_sol, q_sol] = ode23s(@sim_presliding, time_span, q_initial, options, ...
-                        M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs);   
+[t_sol, q_sol] = ode23s(@(t,x)sim_presliding(t, x, M, Fs, Fc, sigma_0, ...
+                 sigma_1, sigma_2, vs), ...
+                 time_span, q_initial, options);
 
 % The problem is, there is no clean way to pass out other results with
 % the built-in solver. We have to recompute the friction force.
@@ -258,8 +254,8 @@ M = 1; % Unit-mass
 xd = 1; % Desired position
 
 % Use ode23s
-[t_sol, q_sol] = ode23s(@sim_pid, time_span, q_initial, [], ...
-                        M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs, xd);   
+[t_sol, q_sol] = ode23s(@(t,x)sim_pid(t, x, M, Fs, Fc, sigma_0, sigma_1, ...
+                 sigma_2, vs, xd), time_span, q_initial);
 
 figure
 hold on
@@ -267,7 +263,7 @@ plot(t_sol, q_sol(:,1))
 plot(t_sol, ones(1,length(t_sol)).*xd);
 xlabel('Time (s)')
 ylabel('Position (m)')
-legend('$x$', '$x_{d}$', 'Interpreter','Latex')
+legend('x', 'x_d', 'Interpreter','tex')
 title('PID Simulation')
 
 %%
