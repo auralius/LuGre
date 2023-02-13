@@ -39,9 +39,8 @@ xd = 1; % Desired position
 
 % Use ode23s
 options = odeset('RelTol',1e-6,'AbsTol',1e-7); % for a perfect hysteresis
-[t_sol, q_sol] = ode23s(@(t,x)sim_fiction_compensation(t, x, M, Fs, Fc, ...
-                 sigma_0, sigma_1, sigma_2, vs, xd,Kp,Ki,Kv,k), ...
-                 time_span, q_initial);
+[t_sol, q_sol] = ode23s(@sim_fiction_compensation, time_span, q_initial, [], ...
+                        M, Fs, Fc, sigma_0, sigma_1, sigma_2, vs, xd,Kp,Ki,Kv,k);   
 
 figure
 hold on
@@ -49,5 +48,5 @@ plot(t_sol, q_sol(:,1))
 plot(t_sol, ones(1,length(t_sol)).*xd);
 xlabel('Time (s)')
 ylabel('Position (m)')
-legend('x', 'x_{d}', 'Interpreter','tex')
+legend('$x$', '$x_{d}$', 'Interpreter','Latex')
 title('PID position control with friction observer')
