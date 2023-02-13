@@ -1,5 +1,10 @@
 [![View LuGre friction model in MATLAB on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/84792-lugre-friction-model-in-matlab)
 
+
+GNU Octave version: https://github.com/auralius/LuGre/tree/octave
+
+
+
 This is a *full reconstruction* of the paper: **A new model for control systems with friction** by Canudas de Wit et al. The paper was published in 1995 (IEEE Transactions on Automatic Control). It can be found in the following link: https://ieeexplore.ieee.org/document/376053  
 
 In this repository, there are 3 main m-files:
